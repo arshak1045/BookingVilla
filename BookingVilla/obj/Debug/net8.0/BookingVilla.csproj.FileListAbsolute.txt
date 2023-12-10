@@ -138,3 +138,4 @@ C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla\bin\Debug\net8.0\BookingVilla
 C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla\bin\Debug\net8.0\BookingVilla.Infrastructure.pdb
 C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla\bin\Debug\net8.0\BookingVilla.Domain.dll
 C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla\bin\Debug\net8.0\BookingVilla.Domain.pdb
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla\obj\Debug\net8.0\BookingVilla.sourcelink.json

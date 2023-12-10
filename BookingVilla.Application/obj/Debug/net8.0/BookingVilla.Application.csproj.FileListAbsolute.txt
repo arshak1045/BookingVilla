@@ -9,3 +9,4 @@ C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Application\obj\Debug\net8.0\
 C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Application\obj\Debug\net8.0\refint\BookingVilla.Application.dll
 C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Application\obj\Debug\net8.0\BookingVilla.Application.pdb
 C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Application\obj\Debug\net8.0\ref\BookingVilla.Application.dll
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Application\obj\Debug\net8.0\BookingVilla.Application.sourcelink.json

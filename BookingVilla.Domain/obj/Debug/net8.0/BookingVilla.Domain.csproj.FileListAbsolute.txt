@@ -9,3 +9,4 @@ C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Domain\obj\Debug\net8.0\Booki
 C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Domain\obj\Debug\net8.0\refint\BookingVilla.Domain.dll
 C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Domain\obj\Debug\net8.0\BookingVilla.Domain.pdb
 C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Domain\obj\Debug\net8.0\ref\BookingVilla.Domain.dll
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Domain\obj\Debug\net8.0\BookingVilla.Domain.sourcelink.json

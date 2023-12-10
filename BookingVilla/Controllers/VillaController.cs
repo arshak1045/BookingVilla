@@ -41,5 +41,52 @@ namespace BookingVilla.Controllers
             }
             return View();
         }
-    }
+
+        public IActionResult Update(int villaId)
+        {
+            Villa? villa = _DbContext.Villas.FirstOrDefault(x => x.Id == villaId);
+            if(villa == null)
+            {
+				return RedirectToAction("Error", "Home");
+			}
+            return View(villa);
+        }
+
+        [HttpPost]
+		public IActionResult Update(Villa villa)
+		{
+			if (ModelState.IsValid && villa.Id > 0)
+			{
+				_DbContext.Villas.Update(villa);
+				_DbContext.SaveChanges();
+				return RedirectToAction("Index");
+			}
+			return View("Index");
+		}
+
+
+        public IActionResult Delete(int villaId) 
+        {
+			Villa? villa = _DbContext.Villas.FirstOrDefault(x => x.Id == villaId);
+			if (villa == null)
+			{
+				return RedirectToAction("Error", "Home");
+			}
+			return View(villa);
+		}
+
+		[HttpPost]
+		public IActionResult Delete(Villa villa)
+		{
+            Villa? villaFromDb = _DbContext.Villas.FirstOrDefault(x => x.Id == villa.Id);
+
+			if (villaFromDb is not null)
+			{
+				_DbContext.Villas.Remove(villaFromDb);
+				_DbContext.SaveChanges();
+				return RedirectToAction("Index");
+			}
+			return View("Index");
+		}
+	}
 }

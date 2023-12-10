@@ -5,6 +5,62 @@
       "PackagePath": "staticwebassets\\BookingVilla.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\Room Images\\1.jpg",
+      "PackagePath": "staticwebassets\\Images\\Room Images\\1.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\Room Images\\2.jpg",
+      "PackagePath": "staticwebassets\\Images\\Room Images\\2.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\Room Images\\3.jpg",
+      "PackagePath": "staticwebassets\\Images\\Room Images\\3.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\Room Images\\4.jpg",
+      "PackagePath": "staticwebassets\\Images\\Room Images\\4.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\Room Images\\5.jpg",
+      "PackagePath": "staticwebassets\\Images\\Room Images\\5.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\Room Images\\6.jpg",
+      "PackagePath": "staticwebassets\\Images\\Room Images\\6.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\Room Images\\7.jpg",
+      "PackagePath": "staticwebassets\\Images\\Room Images\\7.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\accessDenied.jpg",
+      "PackagePath": "staticwebassets\\Images\\accessDenied.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\notfound.jpg",
+      "PackagePath": "staticwebassets\\Images\\notfound.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\orderConfirmed.jpg",
+      "PackagePath": "staticwebassets\\Images\\orderConfirmed.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\placeholder.png",
+      "PackagePath": "staticwebassets\\Images\\placeholder.png"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\resort.png",
+      "PackagePath": "staticwebassets\\Images\\resort.png"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\slide1.jpg",
+      "PackagePath": "staticwebassets\\Images\\slide1.jpg"
+    },
+    {
+      "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\Images\\slide2.jpg",
+      "PackagePath": "staticwebassets\\Images\\slide2.jpg"
+    },
+    {
       "Id": "C:\\Users\\MC-0582\\Desktop\\BookingVilla\\BookingVilla\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
