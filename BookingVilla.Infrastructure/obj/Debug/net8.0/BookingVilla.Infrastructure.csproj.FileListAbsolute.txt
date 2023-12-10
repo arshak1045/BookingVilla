@@ -1,0 +1,17 @@
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\bin\Debug\net8.0\BookingVilla.Infrastructure.deps.json
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\bin\Debug\net8.0\BookingVilla.Infrastructure.dll
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\bin\Debug\net8.0\BookingVilla.Infrastructure.pdb
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\BookingVilla.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\BookingVilla.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\BookingVilla.Infrastructure.AssemblyInfo.cs
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\BookingVilla.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\BookingVilla.Infrastructure.dll
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\refint\BookingVilla.Infrastructure.dll
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\BookingVilla.Infrastructure.pdb
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\ref\BookingVilla.Infrastructure.dll
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\bin\Debug\net8.0\BookingVilla.Infrastructure.runtimeconfig.json
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\BookingVilla.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\BookingVilla.Infrastructure.genruntimeconfig.cache
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\bin\Debug\net8.0\BookingVilla.Domain.dll
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\bin\Debug\net8.0\BookingVilla.Domain.pdb
+C:\Users\MC-0582\Desktop\BookingVilla\BookingVilla.Infrastructure\obj\Debug\net8.0\BookingVilla.Infrastructure.csproj.CopyComplete
