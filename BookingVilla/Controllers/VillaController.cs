@@ -38,7 +38,7 @@ namespace BookingVilla.Controllers
                 _DbContext.Villas.Add(villa);
                 _DbContext.SaveChanges();
                 TempData["success"] = "Success! The villa is created successfully.";
-                return RedirectToAction("Index", "Villa");
+                return RedirectToAction(nameof(Index));
             }
             return View();
         }
@@ -61,9 +61,9 @@ namespace BookingVilla.Controllers
 				_DbContext.Villas.Update(villa);
 				_DbContext.SaveChanges();
                 TempData["success"] = "Success! The villa is updated successfully.";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
 			}
-			return View("Index");
+			return View(nameof(Index));
 		}
 
 
@@ -87,9 +87,9 @@ namespace BookingVilla.Controllers
 				_DbContext.Villas.Remove(villaFromDb);
 				_DbContext.SaveChanges();
                 TempData["success"] = "Success! The villa is deleted successfully.";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
 			}
-			return View("Index");
+			return View(nameof(Index));
 		}
 	}
 }

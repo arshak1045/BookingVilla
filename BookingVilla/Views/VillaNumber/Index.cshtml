@@ -1,0 +1,48 @@
+﻿@model IEnumerable<BookingVilla.Domain.Entities.VillaNumber>
+
+<div class="w-100 card border-0 p-4">
+	<div class="card-header bg-dark bg-gradient m-lg-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h1 class="text-white-50 py-2">Villa Numbers</h1>
+			</div>
+		</div>
+		<div class="card-body border p-4">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th class="card-header bg-light text-black">Villa Name</th>
+						<th class="card-header bg-light text-black">Villa Number</th>
+						<th class="card-header bg-light text-black">Details</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var villaNumber in Model)
+					{
+						<tr>
+							<td class="card-body bg-light text-black"> <i class="bi bi-house-check"></i> @villaNumber.Villa.Name</td>
+							<td class="card-body bg-light text-black"> <i class="bi bi-key"></i> @villaNumber.Villa_Number</td>
+							<td class="card-body bg-light text-black"> <i class="bi bi-journal-text"></i> @villaNumber.Details</td>
+							<td>
+								<div class="w-75 btn-group" role="group">
+									<a asp-controller="VillaNumber" asp-action="Update" class="btn btn-success" asp-route-villaNumberId="@villaNumber.Villa_Number"> <i class="bi bi-pen-fill"></i>Update</a>
+									<a asp-controller="VillaNumber" asp-action="Delete" class="btn btn-danger" asp-route-villaNumberId="@villaNumber.Villa_Number"><i class="bi bi-trash-fill"></i> Delete</a>
+								</div>
+
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<div class="row pb-3">
+				<div class="col-6 offset-6 text-end">
+					<a asp-controller="VillaNumber" asp-action="Create" class="btn btn-success">
+						<i class="bi bi-plus-circle-dotted"></i> Create New Villa Number
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
