@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookingVilla.Domain.Entities
 {
@@ -22,7 +19,9 @@ namespace BookingVilla.Domain.Entities
         public int Sqft { get; set; }
         [Range(1, 10)]
         public int Occupancy { get; set; }
-        [Display(Name="Image URL")]
+        [NotMapped]
+        public IFormFile? Image { get; set; }
+        [Display(Name="Image")]
         public string? ImageUrl { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }

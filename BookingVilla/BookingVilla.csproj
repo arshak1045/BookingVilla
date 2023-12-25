@@ -18,4 +18,8 @@
     <ProjectReference Include="..\BookingVilla.Infrastructure\BookingVilla.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\VillaImages\" />
+  </ItemGroup>
+
 </Project>
