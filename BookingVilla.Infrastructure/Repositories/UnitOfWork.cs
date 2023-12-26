@@ -1,11 +1,6 @@
 ﻿using BookingVilla.Application.Common.Interface;
 using BookingVilla.Application.Common.Interfaces;
 using BookingVilla.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BookingVilla.Infrastructure.Repositories
 {
@@ -13,6 +8,7 @@ namespace BookingVilla.Infrastructure.Repositories
 	{
 		private readonly ApplicationDbContext _context;
 		public IVillaRepository VillaRepository { get; private set; }
+        public IAmenityRepository AmenityRepository { get; private set; }
         public IVillaNumberRepository VillaNumberRepository { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
@@ -20,6 +16,7 @@ namespace BookingVilla.Infrastructure.Repositories
             _context = context;
             VillaRepository = new VillaRepository(context);
             VillaNumberRepository = new VillaNumberRepository(context);
+            AmenityRepository = new AmenityRepository(context);
         }
     }
 }

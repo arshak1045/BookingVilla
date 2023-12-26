@@ -1,0 +1,48 @@
+﻿@model IEnumerable<BookingVilla.Domain.Entities.Amenity>
+
+<div class="w-100 card border-0 p-4">
+	<div class="card-header bg-dark bg-gradient m-lg-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h1 class="text-white-50 py-2">Amenities</h1>
+			</div>
+		</div>
+		<div class="card-body border p-4">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th class="card-header bg-light text-black">Amenity Id</th>
+						<th class="card-header bg-light text-black">Name</th>
+						<th class="card-header bg-light text-black">Villa Name</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var amenity in Model)
+					{
+						<tr>
+							<td class="card-body bg-light text-black"> <i class="bi bi-house-check"></i> @amenity.Id</td>
+							<td class="card-body bg-light text-black"> <i class="bi bi-key"></i> @amenity.Name</td>
+							<td class="card-body bg-light text-black"> <i class="bi bi-journal-text"></i> @amenity.Villa.Name</td>
+							<td>
+								<div class="w-75 btn-group" role="group">
+									<a asp-controller="Amenity" asp-action="Update" class="btn btn-success" asp-route-amenityId="@amenity.Id"> <i class="bi bi-pen-fill"></i>Update</a>
+									<a asp-controller="Amenity" asp-action="Delete" class="btn btn-danger" asp-route-amenityId="@amenity.Id"><i class="bi bi-trash-fill"></i> Delete</a>
+								</div>
+
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<div class="row pb-3">
+				<div class="col-6 offset-6 text-end">
+					<a asp-controller="Amenity" asp-action="Create" class="btn btn-success">
+						<i class="bi bi-plus-circle-dotted"></i> Create New Amenity
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
