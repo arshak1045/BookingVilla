@@ -246,7 +246,7 @@ namespace BookingVilla.Infrastructure.Migrations
             modelBuilder.Entity("BookingVilla.Domain.Entities.Amenity", b =>
                 {
                     b.HasOne("BookingVilla.Domain.Entities.Villa", "Villa")
-                        .WithMany()
+                        .WithMany("Amenities")
                         .HasForeignKey("VillaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -263,6 +263,11 @@ namespace BookingVilla.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Villa");
+                });
+
+            modelBuilder.Entity("BookingVilla.Domain.Entities.Villa", b =>
+                {
+                    b.Navigation("Amenities");
                 });
 #pragma warning restore 612, 618
         }

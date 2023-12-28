@@ -16,7 +16,8 @@ namespace BookingVilla.Infrastructure.Data
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			//base.OnModelCreating(modelBuilder);
-			modelBuilder.Entity<Villa>().HasData(new Villa
+			modelBuilder.Entity<Villa>().HasData(
+				new Villa
 			{
 				Id = 1,
 				Name = "Royal Villa",
