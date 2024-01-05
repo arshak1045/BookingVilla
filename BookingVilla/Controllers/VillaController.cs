@@ -1,9 +1,11 @@
 ﻿using BookingVilla.Application.Common.Interfaces;
 using BookingVilla.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookingVilla.Controllers
 {
+	[Authorize]
 	public class VillaController : Controller
 	{
 

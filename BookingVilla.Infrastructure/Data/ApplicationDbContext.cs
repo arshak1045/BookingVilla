@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using BookingVilla.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BookingVilla.Infrastructure.Data
 {
-	public class ApplicationDbContext : DbContext
+	public class ApplicationDbContext : IdentityDbContext<AppUser>
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 		{
@@ -12,10 +13,12 @@ namespace BookingVilla.Infrastructure.Data
 		public DbSet<Villa> Villas { get; set; }
 		public DbSet<VillaNumber> VillaNumbers { get; set; }
 		public DbSet<Amenity> Amenities { get; set; }
+		public DbSet<AppUser> AppUsers { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			//base.OnModelCreating(modelBuilder);
+			base.OnModelCreating(modelBuilder);
+
 			modelBuilder.Entity<Villa>().HasData(
 				new Villa
 			{

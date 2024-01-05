@@ -1,11 +1,14 @@
 ﻿using BookingVilla.Application.Common.Interfaces;
+using BookingVilla.Application.Common.Utility;
 using BookingVilla.Domain.Entities;
 using BookingVilla.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BookingVilla.Controllers
 {
+	[Authorize(Roles = StaticDetails.Roles.Admin)]
     public class AmenityController : Controller
     {
 
