@@ -16,7 +16,6 @@ namespace BookingVilla.ViewModels
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
         [Required]
-        [Range(2,25)]
         public string Name { get; set; }
         [Display(Name ="Phone Number")]
         [DataType(DataType.PhoneNumber)]

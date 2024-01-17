@@ -65,9 +65,11 @@ namespace BookingVilla.Controllers
             return View(loginVM);
         }
 
-        public IActionResult Register()
+        public IActionResult Register(string returnUrl = null)
         {
-            if (!_roleManager.RoleExistsAsync(Roles.Admin).GetAwaiter().GetResult())
+			returnUrl ??= Url.Content("~/");
+
+			if (!_roleManager.RoleExistsAsync(Roles.Admin).GetAwaiter().GetResult())
             {
                 _roleManager.CreateAsync(new IdentityRole(Roles.Admin)).Wait();
                 _roleManager.CreateAsync(new IdentityRole(Roles.Customer)).Wait();
@@ -79,8 +81,10 @@ namespace BookingVilla.Controllers
                 {
                     Text = x.Name,
                     Value = x.Name
-                })
+                }),
+                RedirectUrl = returnUrl
             };
+            
 
             return View(registerVM);
         }

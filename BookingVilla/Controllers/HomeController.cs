@@ -27,22 +27,6 @@ namespace BookingVilla.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(HomeVM homeVM)
-        {
-            homeVM.VillaList = _unitOfWork.VillaRepository.GetAll(includeProperties: "Amenities");
-
-            foreach (var villa in homeVM.VillaList)
-            {
-                if (villa.Id % 2 == 0)
-                {
-                    villa.IsAvailable = false;
-                }
-            }
-            return View(homeVM);
-        }
-
-
-        [HttpPost]
         public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
         {
             var villaList = _unitOfWork.VillaRepository.GetAll(includeProperties: "Amenities");

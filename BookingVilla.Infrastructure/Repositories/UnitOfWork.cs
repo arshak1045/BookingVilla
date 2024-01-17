@@ -10,6 +10,8 @@ namespace BookingVilla.Infrastructure.Repositories
 		public IVillaRepository VillaRepository { get; private set; }
         public IAmenityRepository AmenityRepository { get; private set; }
         public IVillaNumberRepository VillaNumberRepository { get; private set; }
+        public IBookingRepository BookingRepository { get; private set; }
+        public IAppUserRepository AppUserRepository { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -17,6 +19,8 @@ namespace BookingVilla.Infrastructure.Repositories
             VillaRepository = new VillaRepository(context);
             VillaNumberRepository = new VillaNumberRepository(context);
             AmenityRepository = new AmenityRepository(context);
+            BookingRepository = new BookingRepository(context);
+            AppUserRepository = new AppUserRepository(context);
         }
     }
 }
