@@ -29,7 +29,7 @@ namespace BookingVilla.Infrastructure.Repositories
 			_DbContext.Update(booking);
 		}
 
-		public void UpdateStatus(int bookingId, string orderStatus)
+		public void UpdateStatus(int bookingId, string orderStatus, int villaNumber = 0)
 		{
 			var booking = _DbContext.Bookings.FirstOrDefault(b => b.Id == bookingId);
 			if (booking != null)
@@ -37,6 +37,7 @@ namespace BookingVilla.Infrastructure.Repositories
 				booking.Status = orderStatus;
 				if (booking.Status == StaticDetails.BookStatus.StatusCheckedIn)
 				{
+					booking.VillaNumber = villaNumber;
 					booking.CheckInDate = DateOnly.FromDateTime(DateTime.UtcNow);
 				}
 				if (booking.Status == StaticDetails.BookStatus.StatusCompleted)
