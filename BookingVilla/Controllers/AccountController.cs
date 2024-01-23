@@ -1,4 +1,5 @@
 ﻿using BookingVilla.Application.Common.Interfaces;
+using BookingVilla.Application.Common.Utility;
 using BookingVilla.Domain.Entities;
 using BookingVilla.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -47,13 +48,22 @@ namespace BookingVilla.Controllers
 
                 if (result.Succeeded)
                 {
-                    if (string.IsNullOrEmpty(loginVM.RedirectUrl))
+                    var user = _userManager.FindByEmailAsync(loginVM.Email);
+
+                    if (await _userManager.IsInRoleAsync(await user,StaticDetails.Roles.Admin))
                     {
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Dashboard");
                     }
                     else
                     {
-                        return LocalRedirect(loginVM.RedirectUrl);
+                        if (string.IsNullOrEmpty(loginVM.RedirectUrl))
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            return LocalRedirect(loginVM.RedirectUrl);
+                        }
                     }
                 }
                 else
@@ -61,7 +71,6 @@ namespace BookingVilla.Controllers
                     ModelState.AddModelError("", "Invalid login attempt");
                 }
             }
-
             return View(loginVM);
         }
 
