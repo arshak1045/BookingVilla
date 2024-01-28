@@ -137,7 +137,7 @@ namespace BookingVilla.Controllers
 			Booking booking = _unitOfWork.BookingRepository.Get(x => x.Id == bookingId,
 				includeProperties: "User,Villa");
 
-			if (booking.VillaNumber == 0 && booking.Status == StaticDetails.BookStatus.StatusApproved)
+			if (booking.VillaNumber == 0 && booking.Status == BookStatus.StatusApproved)
 			{
 				var availableVillaNumber = AssignAvailableVillaNumberByVilla(booking.VillaId);
 				booking.VillaNumbers = _unitOfWork.VillaNumberRepository.GetAll(u => u.VillaId == booking.VillaId
@@ -148,7 +148,7 @@ namespace BookingVilla.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Roles = StaticDetails.Roles.Admin)]
+		[Authorize(Roles = Roles.Admin)]
 		public IActionResult CheckIn(Booking booking)
 		{
 			_unitOfWork.BookingRepository.UpdateStatus(booking.Id, StaticDetails.BookStatus.StatusCheckedIn, booking.VillaNumber);
@@ -158,7 +158,7 @@ namespace BookingVilla.Controllers
 		}
 
         [HttpPost]
-        [Authorize(Roles = StaticDetails.Roles.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult CheckOut(Booking booking)
         {
             _unitOfWork.BookingRepository.UpdateStatus(booking.Id, StaticDetails.BookStatus.StatusCompleted, booking.VillaNumber);
@@ -168,7 +168,7 @@ namespace BookingVilla.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = StaticDetails.Roles.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Cancel(Booking booking)
         {
             _unitOfWork.BookingRepository.UpdateStatus(booking.Id, StaticDetails.BookStatus.StatusCanceled, 0);
@@ -182,7 +182,7 @@ namespace BookingVilla.Controllers
 			List<int> availableVillaNumber = new();
 			var villaNumbers = _unitOfWork.VillaNumberRepository.GetAll(u => u.VillaId == villaId);
 			var checkedInVilla = _unitOfWork.BookingRepository.GetAll(u => u.VillaId == villaId &&
-			u.Status == StaticDetails.BookStatus.StatusCheckedIn).Select(u => u.VillaNumber);
+			u.Status == BookStatus.StatusCheckedIn).Select(u => u.VillaNumber);
 
 			foreach (var villaNumber in villaNumbers)
 			{

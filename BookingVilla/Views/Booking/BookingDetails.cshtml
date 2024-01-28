@@ -37,11 +37,14 @@
                         <h3 class="text-success">Enter Booking Details</h3>
                     </div>
                     <div class="form-group pt-2 col-6">
-                        <label class="text-warning">Booking Status</label>
-                        <input asp-for="Status" disabled class="form-control" />
-                    </div>
-                    <div class="col-6">
-                        <button type="submit" asp-action="Cancel" class="btn btn-sm btn-outline-danger form-control my-1"><i class="bi bi-x-circle"></i> &nbsp; Cancel Booking</button>
+                        <label class="text-warning">Status - </label>
+                        <label asp-for="Status">@Model.Status</label>
+                        @if (Model.Status != BookStatus.StatusCanceled || Model.Status != BookStatus.StatusCompleted)
+                        {
+                            <div class="col-6">
+                                <button type="submit" asp-action="Cancel" class="btn btn-sm btn-outline-danger form-control my-1"><i class="bi bi-x-circle"></i> &nbsp; Cancel Booking</button>
+                            </div>
+                        }
                     </div>
                 </div>
                 <div class="row">
@@ -56,14 +59,6 @@
                     <div class="form-group pt-2 col-6">
                         <label class="text-warning">Email</label>
                         <input class="form-control" />
-                    </div>
-                    <div class="form-group pt-2 col-6">
-                        <label class="text-warning">Check in Date</label>
-                        <input asp-for="CheckInDate" disabled class="form-control" />
-                    </div>
-                    <div class="form-group pt-2 col-6">
-                        <label class="text-warning">Check Out Date</label>
-                        <input asp-for="CheckOutDate" disabled class="form-control" />
                     </div>
                     <div class="form-group pt-2 col-6">
                         <label class="text-warning">No. of nights</label>
@@ -93,8 +88,8 @@
                     @if (Model.Status == BookStatus.StatusApproved && User.IsInRole(Roles.Admin))
                     {
                         <div class="form-group pt-2 col-6">
-                            <label class="text-warning" asp-for="VillaNumber"></label>
-                            <select class="form-select" asp-for="VillaNumbers">
+                            <label class="text-warning" asp-for="VillaNumber">Villa Number </label>
+                            <select class="form-select" asp-for="VillaNumber">
                                 @foreach (var item in Model.VillaNumbers)
                                 {
                                     <option value="@item.Villa_Number">@item.Villa_Number</option>
