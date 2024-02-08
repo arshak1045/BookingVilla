@@ -4,6 +4,11 @@ using BookingVilla.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.DocIORenderer;
+using Syncfusion.Drawing;
+using Syncfusion.Pdf;
 using System.Security.Claims;
 using static BookingVilla.Application.Common.Utility.StaticDetails;
 
@@ -12,10 +17,12 @@ namespace BookingVilla.Controllers
 	public class BookingController : Controller
 	{
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IWebHostEnvironment _webHostEnvironment;
 
-		public BookingController(IUnitOfWork unitOfWork)
+		public BookingController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
 		{
 			_unitOfWork = unitOfWork;
+			_webHostEnvironment = webHostEnvironment;
 		}
 
 		[Authorize]
@@ -148,6 +155,137 @@ namespace BookingVilla.Controllers
 		}
 
 		[HttpPost]
+		[Authorize]
+		public IActionResult GenerateInvoice(int id, string downloadType)
+		{
+			string basePath = _webHostEnvironment.WebRootPath;
+			WordDocument document = new();
+			//Load Template
+			string dataPath = $"{basePath}/exports/BookingDetails.docx";
+			using FileStream fileStream = new(
+				dataPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+			document.Open(fileStream, FormatType.Automatic);
+
+			//Update Template
+			Booking booking = _unitOfWork.BookingRepository.Get(
+				b => b.Id == id, includeProperties: "User,Villa");
+			TextSelection textSelection = document.Find(
+				"xx_customer_name", false, true);
+			WTextRange textRange = textSelection.GetAsOneRange();
+			textRange.Text = booking.User.Name;
+
+			textSelection = document.Find("xx_customer_email", false, true);
+			textRange = textSelection.GetAsOneRange();
+			textRange.Text = booking.Email;
+
+            textSelection = document.Find("xx_customer_phone", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = booking.User.PhoneNumber;
+
+            textSelection = document.Find("xx_BOOKING_NUMBER", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = $"Booking Id - {booking.Id}";
+
+            textSelection = document.Find("xx_BOOKING_DATE", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = $"Booking Date - {booking.BookingDate.ToShortDateString()}";
+
+            textSelection = document.Find("xx_payment_date", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = booking.PaymentDate.ToShortDateString();
+
+            textSelection = document.Find("xx_checkin_date", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = booking.CheckInDate.ToShortDateString();
+
+            textSelection = document.Find("xx_checkout_date", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = booking.CheckOutDate.ToShortDateString();
+
+            textSelection = document.Find("xx_booking_total", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = booking.TotalCost.ToString("c");
+
+			WTable table = new (document);
+			table.TableFormat.Borders.LineWidth = 1f;
+			table.TableFormat.Borders.Color = Color.Black;
+			table.TableFormat.Paddings.Top = 7f;
+			table.TableFormat.Paddings.Bottom = 7f;
+			table.TableFormat.Borders.Horizontal.LineWidth = 1f;
+
+			int rows = booking.VillaNumber > 0 ? 3 : 2;
+			table.ResetCells(rows, 4);
+
+			WTableRow row0 = table.Rows[0];
+			row0.Cells[0].AddParagraph().AppendText("Nights");
+			row0.Cells[0].Width = 80;
+			row0.Cells[1].AddParagraph().AppendText("Villa");
+			row0.Cells[1].Width = 220;
+			row0.Cells[2].AddParagraph().AppendText("Price Per Night");
+			row0.Cells[3].AddParagraph().AppendText("Total");
+			row0.Cells[3].Width = 80;
+
+			WTableRow row1 = table.Rows[1];
+			row1.Cells[0].AddParagraph().AppendText(booking.Nights.ToString());
+			row1.Cells[0].Width = 80;
+			row1.Cells[1].AddParagraph().AppendText(booking.Villa.Name);
+            row1.Cells[1].Width = 220;
+            row1.Cells[2].AddParagraph().AppendText((booking.TotalCost / booking.Nights).ToString());
+			row1.Cells[3].AddParagraph().AppendText((booking.TotalCost).ToString("c"));
+            row1.Cells[3].Width = 80;
+
+			if (booking.VillaNumber > 0)
+			{
+                WTableRow row2 = table.Rows[2];
+                row2.Cells[0].Width = 80;
+                row2.Cells[1].AddParagraph().AppendText($"Villa Number - {booking.VillaNumber}");
+                row2.Cells[1].Width = 220;
+                row2.Cells[3].Width = 80;
+            }
+
+			WTableStyle tableStyle = document.AddTableStyle("CustomStyle") as WTableStyle;
+			tableStyle.TableProperties.RowStripe = 1;
+			tableStyle.TableProperties.ColumnStripe = 2;
+			tableStyle.TableProperties.Paddings.Top = 2;
+			tableStyle.TableProperties.Paddings.Bottom = 1;
+			tableStyle.TableProperties.Paddings.Left = 5.4f;
+			tableStyle.TableProperties.Paddings.Right = 5.4f;
+
+			ConditionalFormattingStyle firstRowStyle = tableStyle.
+				ConditionalFormattingStyles.Add(ConditionalFormattingType.FirstRow);
+			firstRowStyle.CharacterFormat.Bold = true;
+			firstRowStyle.CharacterFormat.TextColor = Color.FromArgb(255, 255, 255, 255);
+			firstRowStyle.CellProperties.BackColor = Color.Black;
+
+			table.ApplyStyle("CustomStyle");
+
+			TextBodyPart textBodyPart = new (document);
+			textBodyPart.BodyItems.Add(table);
+
+			document.Replace("<ADDTABLEHERE>", textBodyPart, false, false);
+
+            using DocIORenderer renderer = new ();
+			MemoryStream stream = new ();
+
+			if (downloadType == "word")
+			{
+                document.Save(stream, FormatType.Docx);
+                stream.Position = 0;
+
+                return File(stream, "application/docx", "BookingDetails.docx");
+            }
+			else
+			{
+				PdfDocument pdfDocument= renderer.ConvertToPDF(document);
+				pdfDocument.Save(stream);
+				stream.Position = 0;
+
+				return File(stream, "application/pdf", "BookingDetails.pdf");
+			}
+
+		}
+
+        [HttpPost]
 		[Authorize(Roles = Roles.Admin)]
 		public IActionResult CheckIn(Booking booking)
 		{

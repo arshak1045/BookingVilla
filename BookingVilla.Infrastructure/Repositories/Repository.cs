@@ -22,10 +22,18 @@ namespace BookingVilla.Infrastructure.Repositories
 			_dbSet.Add(entity);
 		}
 
-		public T? Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+		public T? Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
 		{
-			IQueryable<T> query = _dbSet;
+			IQueryable<T> query;
 
+			if (tracked)
+			{
+				query = _dbSet;
+			}
+			else
+			{
+				query = _dbSet.AsNoTracking();
+			}
 			if (filter != null)
 			{
 				query = query.Where(filter);
@@ -41,9 +49,17 @@ namespace BookingVilla.Infrastructure.Repositories
 			return query.FirstOrDefault();
 		}
 
-		public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+		public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, bool tracked = false)
 		{
-			IQueryable<T> query = _dbSet;
+			IQueryable<T> query;
+			if (tracked)
+			{
+				query = _dbSet;
+			}
+			else
+			{
+				query = _dbSet.AsNoTracking();
+			}
 
 			if (filter != null)
 			{
