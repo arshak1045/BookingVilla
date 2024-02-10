@@ -78,12 +78,6 @@ namespace BookingVilla.Controllers
         {
 			returnUrl ??= Url.Content("~/");
 
-			if (!_roleManager.RoleExistsAsync(Roles.Admin).GetAwaiter().GetResult())
-            {
-                _roleManager.CreateAsync(new IdentityRole(Roles.Admin)).Wait();
-                _roleManager.CreateAsync(new IdentityRole(Roles.Customer)).Wait();
-            }
-
             RegisterVM registerVM = new RegisterVM()
             {
                 RoleList = _roleManager.Roles.Select(x => new SelectListItem

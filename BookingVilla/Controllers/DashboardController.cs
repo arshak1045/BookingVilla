@@ -158,7 +158,7 @@ namespace BookingVilla.Controllers
 
             radialBarChartVM.TotalCount = totalCount;
             radialBarChartVM.CountInCurrentMonth = Convert.ToInt32(currentMonthCount);
-            radialBarChartVM.HasRatioIncreased = currentMonthCount < prevMonthCount;
+            radialBarChartVM.HasRatioIncreased = currentMonthCount > prevMonthCount;
             radialBarChartVM.Series = new int[] { increaseDecreaseRatio };
 
             return radialBarChartVM;
