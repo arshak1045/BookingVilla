@@ -1,6 +1,6 @@
-﻿namespace BookingVilla.ViewModels
+﻿namespace BookingVilla.Application.Common.DTO
 {
-	public class PieChartVM
+	public class PieChartDto
 	{
 		public decimal[] Series { get; set; }
 		public string[] Labels { get; set; }

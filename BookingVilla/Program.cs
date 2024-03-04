@@ -1,14 +1,13 @@
-using BookingVilla.Application.Common.Interface;
 using BookingVilla.Application.Common.Interfaces;
+using BookingVilla.Application.Services.Implementation;
+using BookingVilla.Application.Services.Interface;
 using BookingVilla.Domain.Entities;
 using BookingVilla.Infrastructure.Data;
-using BookingVilla.Infrastructure.Migrations;
 using BookingVilla.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Syncfusion.Licensing;
-using System.Net.WebSockets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +19,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 var app = builder.Build();
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 SyncfusionLicenseProvider.RegisterLicense(builder.Configuration.GetSection("Syncfusion:LicenseKey").Get<string>());

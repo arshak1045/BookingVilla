@@ -13,6 +13,7 @@
     <PackageReference Include="Syncfusion.Licensing" Version="24.2.3" />
     <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="24.2.3" />
     <PackageReference Include="Syncfusion.Presentation.Net.Core" Version="24.2.3" />
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
