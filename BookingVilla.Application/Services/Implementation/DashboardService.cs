@@ -26,13 +26,11 @@ namespace BookingVilla.Application.Services.Implementation
             var customerWithOneBooking = totalBookings.GroupBy(b => b.UserId).Where(x => x.Count() == 1).Select(x => x.Key).ToList();
             int bookingsByNewCustomer = customerWithOneBooking.Count();
             int bookingsByReturningCustomer = totalBookings.Count() - bookingsByNewCustomer;
-
             PieChartDto PieChartDto = new PieChartDto()
             {
                 Labels = new string[] { "New Customer", "Returning Customer Bookings" },
                 Series = new decimal[] { bookingsByNewCustomer, bookingsByReturningCustomer }
             };
-
             return PieChartDto;
         }
 
@@ -45,7 +43,6 @@ namespace BookingVilla.Application.Services.Implementation
                 DateTime = b.Key,
                 NewBookingCount = b.Count(),
             });
-
             var userData = _unitOfWork.AppUserRepository.GetAll(u => u.CreatedAt >= DateTime.Now.AddDays(-30) &&
             u.CreatedAt.Date <= DateTime.Now).GroupBy(u => u.CreatedAt.Date).Select(u =>
             new
@@ -53,7 +50,6 @@ namespace BookingVilla.Application.Services.Implementation
                 DateTime = u.Key,
                 NewUserCount = u.Count(),
             });
-
             var leftJoin = bookingData.GroupJoin(userData, booking => booking.DateTime, user => user.DateTime,
                 (booking, user) => new
                 {
@@ -61,7 +57,6 @@ namespace BookingVilla.Application.Services.Implementation
                     booking.NewBookingCount,
                     NewUserCount = user.Select(u => u.NewUserCount).FirstOrDefault()
                 });
-
             var rightJoin = userData.GroupJoin(bookingData, user => user.DateTime, booking => booking.DateTime,
                 (user, booking) => new
                 {
@@ -69,12 +64,10 @@ namespace BookingVilla.Application.Services.Implementation
                     NewBookingCount = booking.Select(u => u.NewBookingCount).FirstOrDefault(),
                     user.NewUserCount
                 });
-
             var mergedData = leftJoin.Union(rightJoin).OrderBy(x => x.DateTime).ToList();
             var newBookingData = mergedData.Select(x => x.NewBookingCount).ToArray();
             var newUserData = mergedData.Select(x => x.NewUserCount).ToArray();
             var categories = mergedData.Select(x => x.DateTime.ToString("MM/dd/yyyy")).ToArray();
-
             List<ChartData> chartData = new()
             {
                 new ChartData
@@ -88,13 +81,11 @@ namespace BookingVilla.Application.Services.Implementation
                     Data = newUserData
                 }
             };
-
             LineChartDto LineChartDto = new()
             {
                 Categories = categories,
                 Series = chartData
             };
-
             return LineChartDto;
         }
 
@@ -121,7 +112,6 @@ namespace BookingVilla.Application.Services.Implementation
             var countByPreviousMonth = totalBookings.Count(
                 b => b.BookingDate >= previousMonthStartDate &&
                 b.BookingDate <= currentMonthStartDate);
-
             return GetRadialChartModel(totalBookings.Count(), countByCurrentMonth, countByPreviousMonth);
         }
 
@@ -137,7 +127,6 @@ namespace BookingVilla.Application.Services.Implementation
             var countByPreviousMonth = totalBookings.Where(
                 b => b.BookingDate >= previousMonthStartDate &&
                 b.BookingDate <= currentMonthStartDate).Sum(b => b.TotalCost);
-
             return GetRadialChartModel(revenue, countByCurrentMonth, countByPreviousMonth);
         }
 
@@ -155,7 +144,6 @@ namespace BookingVilla.Application.Services.Implementation
             RadialBarChartDto.CountInCurrentMonth = Convert.ToInt32(currentMonthCount);
             RadialBarChartDto.HasRatioIncreased = currentMonthCount > prevMonthCount;
             RadialBarChartDto.Series = new int[] { increaseDecreaseRatio };
-
             return RadialBarChartDto;
         }
     }

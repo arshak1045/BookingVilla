@@ -1,6 +1,5 @@
-﻿using BookingVilla.Application.Common.Interfaces;
-using BookingVilla.Application.Common.Utility;
-using BookingVilla.Domain.Entities;
+﻿using BookingVilla.Application.Common.Utility;
+using BookingVilla.Application.Services.Interface;
 using BookingVilla.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,17 +10,18 @@ namespace BookingVilla.Controllers
 	[Authorize(Roles = StaticDetails.Roles.Admin)]
     public class AmenityController : Controller
     {
+		private readonly IAmenityService _amenityService;
+		private readonly IVillaService _villaService;
 
-		private readonly IUnitOfWork _unitOfWork;
-
-		public AmenityController(IUnitOfWork unitOfWork)
-		{
-			_unitOfWork = unitOfWork;
-		}
-
-		public IActionResult Index()
+        public AmenityController(IAmenityService amenityService, IVillaService villaService)
         {
-            var amenities = _unitOfWork.AmenityRepository.GetAll(includeProperties: "Villa");
+            _amenityService = amenityService;
+            _villaService = villaService;
+        }
+
+        public IActionResult Index()
+        {
+            var amenities = _amenityService.GetAllAmenities();
             return View(amenities);
         }
 
@@ -29,7 +29,7 @@ namespace BookingVilla.Controllers
         {
             AmenityVM AmenityVM = new AmenityVM()
             {
-                VillaList = _unitOfWork.VillaRepository.GetAll().Select(item => new SelectListItem
+                VillaList = _villaService.GetAllVillas().Select(item => new SelectListItem
                 {
                     Text = item.Name,
                     Value = item.Id.ToString()
@@ -43,18 +43,16 @@ namespace BookingVilla.Controllers
         {
             if(ModelState.IsValid)
             {
-				_unitOfWork.AmenityRepository.Add(vN.Amenity);
-				_unitOfWork.AmenityRepository.Save();
+				_amenityService.CreateAmenity(vN.Amenity);
                 TempData["success"] = "Success! The amenity is created successfully.";
                 return RedirectToAction(nameof(Index));
             }
 
-            vN.VillaList = _unitOfWork.VillaRepository.GetAll().Select(item => new SelectListItem
+            vN.VillaList = _villaService.GetAllVillas().Select(item => new SelectListItem
             {
                 Text = item.Name,
                 Value = item.Id.ToString()
             });
-
 			return View(vN);
         }
 
@@ -62,12 +60,12 @@ namespace BookingVilla.Controllers
         {
 			AmenityVM amenityVM = new AmenityVM()
 			{
-				VillaList = _unitOfWork.VillaRepository.GetAll().Select(item => new SelectListItem
+				VillaList = _villaService.GetAllVillas().Select(item => new SelectListItem
 				{
 					Text = item.Name,
 					Value = item.Id.ToString()
 				}),
-                Amenity = _unitOfWork.AmenityRepository.Get(item => item.Id == amenityId)
+                Amenity = _amenityService.GetAmenityById(amenityId)
 			};
 			return View(amenityVM);
 		}
@@ -75,16 +73,14 @@ namespace BookingVilla.Controllers
         [HttpPost]
 		public IActionResult Update(AmenityVM AmenityVM)
 		{
-
 			if (ModelState.IsValid)
 			{
-				_unitOfWork.AmenityRepository.Update(AmenityVM.Amenity);
-				_unitOfWork.AmenityRepository.Save();
+				_amenityService.UpdateAmenity(AmenityVM.Amenity);
 				TempData["success"] = "Success! The amenity is updated successfully.";
 				return RedirectToAction(nameof(Index));
 			}
 
-			AmenityVM.VillaList = _unitOfWork.VillaRepository.GetAll().Select(item => new SelectListItem
+			AmenityVM.VillaList = _villaService.GetAllVillas().Select(item => new SelectListItem
 			{
 				Text = item.Name,
 				Value = item.Id.ToString()
@@ -92,17 +88,16 @@ namespace BookingVilla.Controllers
             return View(AmenityVM);
 		}
 
-
         public IActionResult Delete(int amenityId) 
         {
 			AmenityVM amenityVM = new AmenityVM()
 			{
-				VillaList = _unitOfWork.VillaRepository.GetAll().Select(item => new SelectListItem
+				VillaList = _villaService.GetAllVillas().Select(item => new SelectListItem
 				{
 					Text = item.Name,
 					Value = item.Id.ToString()
 				}),
-				Amenity = _unitOfWork.AmenityRepository.Get(item => item.Id == amenityId)
+				Amenity = _amenityService.GetAmenityById(amenityId)
 			};
 			return View(amenityVM);
 		}
@@ -110,13 +105,8 @@ namespace BookingVilla.Controllers
 		[HttpPost]
 		public IActionResult Delete(AmenityVM amenityVM)
 		{
-            Amenity? amenityForRemove = _unitOfWork.AmenityRepository.Get(item =>
-            item.Id == amenityVM.Amenity.Id);
-
-			if (amenityForRemove is not null)
+			if (_amenityService.DeleteAmenity(amenityVM.Amenity.Id))
 			{
-				_unitOfWork.AmenityRepository.Remove(amenityForRemove);
-				_unitOfWork.AmenityRepository.Save();
                 TempData["success"] = "Success! The amenity is deleted successfully.";
                 return RedirectToAction("Index");
 			}

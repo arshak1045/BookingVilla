@@ -1,7 +1,8 @@
-﻿using BookingVilla.Application.Common.Interfaces;
-using BookingVilla.Application.Common.Utility;
+﻿using BookingVilla.Application.Common.Utility;
+using BookingVilla.Application.Services.Interface;
 using BookingVilla.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
 using Syncfusion.DocIO;
@@ -16,13 +17,21 @@ namespace BookingVilla.Controllers
 {
 	public class BookingController : Controller
 	{
-		private readonly IUnitOfWork _unitOfWork;
 		private readonly IWebHostEnvironment _webHostEnvironment;
+		private readonly IVillaService _villaService;
+		private readonly IVillaNumberService _villaNumberService;
+		private readonly IBookingService _bookingService;
+		private readonly UserManager<AppUser> _userManager;
 
-		public BookingController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+		public BookingController(IWebHostEnvironment webHostEnvironment,
+			IVillaService villaService, IVillaNumberService villaNumberService,
+			IBookingService bookingService, UserManager<AppUser> userManager)
 		{
-			_unitOfWork = unitOfWork;
 			_webHostEnvironment = webHostEnvironment;
+			_villaService = villaService;
+			_villaNumberService = villaNumberService;
+			_bookingService = bookingService;
+			_userManager = userManager;
 		}
 
 		[Authorize]
@@ -36,11 +45,11 @@ namespace BookingVilla.Controllers
 		{
 			var claimsIdentity = (ClaimsIdentity)User.Identity;
 			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-			AppUser user = _unitOfWork.AppUserRepository.Get(user => user.Id == userId);
+			AppUser user = _userManager.FindByIdAsync(userId).GetAwaiter().GetResult();
 			Booking booking = new Booking()
 			{
 				VillaId = villaId,
-				Villa = _unitOfWork.VillaRepository.Get(villa => villa.Id == villaId, includeProperties: "Amenities"),
+				Villa = _villaService.GetVilla(villaId),
 				CheckInDate = checkInDate,
 				Nights = nights,
 				CheckOutDate = checkInDate.AddDays(nights),
@@ -51,7 +60,6 @@ namespace BookingVilla.Controllers
 
 			};
 			booking.TotalCost = booking.Villa.Price * nights;
-
 			return View(booking);
 		}
 
@@ -59,17 +67,12 @@ namespace BookingVilla.Controllers
 		[HttpPost]
 		public IActionResult FinalizeBooking(Booking booking)
 		{
-			var villa = _unitOfWork.VillaRepository.Get(villa => villa.Id == booking.VillaId);
+			var villa = _villaService.GetVilla(booking.VillaId);
 			booking.TotalCost = villa.Price * booking.Nights;
 			booking.Status = BookStatus.StatusPending;
 			booking.BookingDate = DateTime.Now;
-            var villaNumbersList = _unitOfWork.VillaNumberRepository.GetAll().ToList();
-            var bookedVillas = _unitOfWork.BookingRepository.GetAll(b => b.Status == StaticDetails.BookStatus.StatusApproved ||
-            b.Status == StaticDetails.BookStatus.StatusCheckedIn).ToList();
-			int roomAvailable = StaticDetails.VillaNumberAvailability_Count
-                (villa.Id, villaNumbersList, booking.CheckInDate, booking.Nights, bookedVillas);
 
-			if (roomAvailable == 0)
+			if (!_villaService.IsAvailableVillaByDate(villa.Id, booking.Nights, booking.CheckInDate))
 			{
 				TempData["error"] = "Room has been sold out";
 				return RedirectToAction(nameof(FinalizeBooking), new
@@ -79,9 +82,7 @@ namespace BookingVilla.Controllers
 					nights = booking.Nights
 				});
 			}
-
-            _unitOfWork.BookingRepository.Add(booking);
-			_unitOfWork.BookingRepository.Save();
+            _bookingService.CreateBooking(booking);
 
 			var domain = $"{Request.Scheme}://{Request.Host.Value}/";
 			var options = new SessionCreateOptions
@@ -105,13 +106,9 @@ namespace BookingVilla.Controllers
 				},
 				Quantity = 1
 			});
-
 			var service = new SessionService();
 			Session session = service.Create(options);
-
-			_unitOfWork.BookingRepository.UpdateStripePaymentId(booking.Id, session.Id, session.PaymentIntentId);
-			_unitOfWork.BookingRepository.Save();
-
+			_bookingService.UpdateStripePaymentId(booking.Id, session.Id, session.PaymentIntentId);
 			Response.Headers.Add("Location", session.Url);
 			return new StatusCodeResult(303);
 		}
@@ -119,8 +116,7 @@ namespace BookingVilla.Controllers
 		[Authorize]
 		public IActionResult BookingConfirmation(int bookingId)
 		{
-			Booking booking = _unitOfWork.BookingRepository.Get(x => x.Id == bookingId,
-				includeProperties: "User,Villa");
+			Booking booking = _bookingService.GetBookingById(bookingId);
 
 			if (booking.Status == BookStatus.StatusPending )
 			{
@@ -129,28 +125,24 @@ namespace BookingVilla.Controllers
 
 				if (session.PaymentStatus == "paid")
 				{
-					_unitOfWork.BookingRepository.UpdateStatus(booking.Id, BookStatus.StatusApproved, 0);
-					_unitOfWork.BookingRepository.UpdateStripePaymentId(booking.Id,session.Id, session.PaymentIntentId);
-					_unitOfWork.BookingRepository.Save();
+					_bookingService.UpdateStatus(booking.Id, BookStatus.StatusApproved, 0);
+                    _bookingService.UpdateStripePaymentId(booking.Id,session.Id, session.PaymentIntentId);
 				}
 			}
-
 			return View(bookingId);
 		}
 
 		[Authorize]
 		public IActionResult BookingDetails(int bookingId)
 		{
-			Booking booking = _unitOfWork.BookingRepository.Get(x => x.Id == bookingId,
-				includeProperties: "User,Villa");
+			Booking booking = _bookingService.GetBookingById(bookingId);
 
 			if (booking.VillaNumber == 0 && booking.Status == BookStatus.StatusApproved)
 			{
 				var availableVillaNumber = AssignAvailableVillaNumberByVilla(booking.VillaId);
-				booking.VillaNumbers = _unitOfWork.VillaNumberRepository.GetAll(u => u.VillaId == booking.VillaId
+				booking.VillaNumbers = _villaNumberService.GetAllVillaNumbers().Where(u => u.VillaId == booking.VillaId
 				&& availableVillaNumber.Any(x => x == u.Villa_Number)).ToList();
 			}
-
 			return View(booking);
 		}
 
@@ -167,8 +159,7 @@ namespace BookingVilla.Controllers
 			document.Open(fileStream, FormatType.Automatic);
 
 			//Update Template
-			Booking booking = _unitOfWork.BookingRepository.Get(
-				b => b.Id == id, includeProperties: "User,Villa");
+			Booking booking = _bookingService.GetBookingById(id);
 			TextSelection textSelection = document.Find(
 				"xx_customer_name", false, true);
 			WTextRange textRange = textSelection.GetAsOneRange();
@@ -282,15 +273,13 @@ namespace BookingVilla.Controllers
 
 				return File(stream, "application/pdf", "BookingDetails.pdf");
 			}
-
 		}
 
         [HttpPost]
 		[Authorize(Roles = Roles.Admin)]
 		public IActionResult CheckIn(Booking booking)
 		{
-			_unitOfWork.BookingRepository.UpdateStatus(booking.Id, StaticDetails.BookStatus.StatusCheckedIn, booking.VillaNumber);
-			_unitOfWork.BookingRepository.Save();
+			_bookingService.UpdateStatus(booking.Id, BookStatus.StatusCheckedIn, booking.VillaNumber);
 			TempData["Success"] = "Booking Updated Successfully.";
 			return RedirectToAction(nameof(BookingDetails), new { bookingId = booking.Id });
 		}
@@ -299,8 +288,7 @@ namespace BookingVilla.Controllers
         [Authorize(Roles = Roles.Admin)]
         public IActionResult CheckOut(Booking booking)
         {
-            _unitOfWork.BookingRepository.UpdateStatus(booking.Id, StaticDetails.BookStatus.StatusCompleted, booking.VillaNumber);
-            _unitOfWork.BookingRepository.Save();
+            _bookingService.UpdateStatus(booking.Id, BookStatus.StatusCompleted, booking.VillaNumber);
             TempData["Success"] = "Booking Completed Successfully.";
             return RedirectToAction(nameof(BookingDetails), new { bookingId = booking.Id });
         }
@@ -309,8 +297,7 @@ namespace BookingVilla.Controllers
         [Authorize(Roles = Roles.Admin)]
         public IActionResult Cancel(Booking booking)
         {
-            _unitOfWork.BookingRepository.UpdateStatus(booking.Id, StaticDetails.BookStatus.StatusCanceled, 0);
-            _unitOfWork.BookingRepository.Save();
+            _bookingService.UpdateStatus(booking.Id, BookStatus.StatusCanceled, 0);
             TempData["Success"] = "Booking Canceled Successfully.";
             return RedirectToAction(nameof(BookingDetails), new { bookingId = booking.Id });
         }
@@ -318,9 +305,8 @@ namespace BookingVilla.Controllers
         private List<int> AssignAvailableVillaNumberByVilla(int villaId)
 		{
 			List<int> availableVillaNumber = new();
-			var villaNumbers = _unitOfWork.VillaNumberRepository.GetAll(u => u.VillaId == villaId);
-			var checkedInVilla = _unitOfWork.BookingRepository.GetAll(u => u.VillaId == villaId &&
-			u.Status == BookStatus.StatusCheckedIn).Select(u => u.VillaNumber);
+			var villaNumbers = _villaNumberService.GetAllVillaNumbers().Where(u => u.VillaId == villaId);
+			var checkedInVilla = _bookingService.GetCheckedInVillaNumbers(villaId);
 
 			foreach (var villaNumber in villaNumbers)
 			{
@@ -329,7 +315,6 @@ namespace BookingVilla.Controllers
 					availableVillaNumber.Add(villaNumber.Villa_Number);
 				}
 			}
-
 			return availableVillaNumber;
 		}
 
@@ -339,27 +324,20 @@ namespace BookingVilla.Controllers
 		public IActionResult GetAll(string status) 
 		{
 			IEnumerable<Booking> bookings;
+			string userId = "";
 
-			if (User.IsInRole(Roles.Admin))
-			{
-				bookings = _unitOfWork.BookingRepository.GetAll(includeProperties: "User,Villa");
-			}
-			else
+            if (!string.IsNullOrEmpty(status))
+            {
+                status = "";
+            }
+            if (!User.IsInRole(Roles.Admin))
 			{
 				var claimsIdentity = (ClaimsIdentity)User.Identity;
-				var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-				bookings = _unitOfWork.BookingRepository.GetAll(b => b.UserId == userId, 
-					includeProperties: "User,Villa");
+				userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 			}
-			if(!string.IsNullOrEmpty(status))
-			{
-				bookings = bookings.Where(b => b.Status.ToLower().Equals(status.ToLower()));
-			}
-
-			return Json(new {data = bookings});
+            bookings = _bookingService.GetAllBookings(userId, status);
+            return Json(new {data = bookings});
 		}
-
         #endregion
     }
 }
